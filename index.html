@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Exercise 3</title>
+    <style type="text/css">
+    #stage
+    {
+        position: relative;
+        display: block;
+        width: 700px;
+        height: 600px;
+    }
+    #map
+    {
+        background-image: url("img/map.jpg");
+    }
+    #header > h2
+    {
+        clear: left;
+        display: block;
+        padding-left: 30px;
+    }
+    #header
+    {
+        display: block;
+        font-weight: bold;
+        /*padding needed else looks weird*/
+        padding: 1px;
+        background-color: #588063;
+    }
+    #footer
+    {
+        /* clear is needed if you want absolute centering in the middle of the footer
+        clear: both;
+        */
+        background-color: #9e7606;
+        text-align: center;
+        font-weight: bold;
+        padding: 20px;
+    }
+
+    /* needed for both columns */
+    .column {
+        float: left;
+    }
+
+    .column.left {
+        display: block;
+        width: 500px;
+        height: 500px;
+        background-color: black;
+    }
+
+    .column.right {
+        text-align: center;
+        width: 200px;
+        height: 500px;
+        background-color: lightpink;
+    }
+
+    #sprite
+    {
+        position: absolute;
+        display: block;
+        width: 64px;
+        height: 64px;
+        top: 230px;
+        left: 180px;
+        background-image: url("img/sprite.png");
+    }
+    </style>
+</head>
+<body>
+<div id="stage">
+    <header id="header"><h2>Grand Hawaiian Tour</h2></header>
+    <div class="column left" id="map">
+        <div id="sprite"></div>
+    </div>
+    <div class="column right">
+        <p><strong>Column 'o buttons</strong></p>
+        <p>This is an awesome game!</p>
+        <button type="submit" value="play">Click to play</button>
+        <button type="submit" value="forfeit">Toss in the towel</button>
+    </div>
+    <div id="footer"><h3>Copyright &copy; BC Game Demons</h3></div>
+</div>
+</body>
+</html>
