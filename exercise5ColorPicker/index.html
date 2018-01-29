@@ -88,7 +88,7 @@
     var blueInput = document.querySelector("#blue");
     var greenInput = document.querySelector("#green");
 
-    // color submit & clear buttons button
+    // assign color submit & clear buttons
     var colorSubmitBtn = document.querySelector("#show");
     colorSubmitBtn.addEventListener("click", clickHandler, false);
 
@@ -126,7 +126,7 @@
         var blueColor = parseInt(blueInput.value);
         var greenColor = parseInt(greenInput.value);
 
-        // Make sure each value color value from the forms passes each boolean check with func checkColor
+        // Make sure each color value from the forms passes each boolean check with func checkColor
         if (checkColor(redColor) && checkColor(blueColor) && checkColor(greenColor)) {
             map.style.backgroundColor =  'rgb(' + redColor + ',' + greenColor + ',' + blueColor + ')';
         }
