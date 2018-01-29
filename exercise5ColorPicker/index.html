@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.29/browser.js"></script>
+<title>Exercise 5</title>
+    <style type="text/css">
+
+
+    #stage
+    {
+        position: relative;
+        display: block;
+        width: 900px;
+        height: 600px;
+    }
+
+    #map
+    {
+        background-color: rgba(99, 99, 99, 1);
+    }
+    #header > h2
+    {
+        clear: left;
+        display: block;
+        padding-left: 30px;
+    }
+    #header
+    {
+        display: block;
+        font-weight: bold;
+        /*padding needed else looks weird*/
+        padding: 1px;
+        background-color: #588063;
+    }
+
+
+    /* needed for both columns */
+    .column {
+        float: left;
+    }
+
+    .column.left {
+        display: block;
+        width: 600px;
+        height: 500px;
+        background-color: black;
+    }
+
+    .column.right {
+        text-align: center;
+        width: 300px;
+        height: 500px;
+        background-color: lightpink;
+    }
+    </style>
+</head>
+<body>
+<div id="stage">
+    <header id="header"><h2>Color Picker</h2>
+    <h5>The background color will change below here</h5></header>
+
+    <!-- Begin div which changes color-->
+    <div class="column left" id="map">
+    </div>
+
+    <div class="column right">
+        <p><strong>Select a number from 0 to 255 for each color value:</strong></p>
+        <form>
+        Red
+        <input id="red" type="number" placeholder="0" autofocus>
+        <br>Blue
+        <input id="blue"  placeholder="0" type="number">
+        <br>Green
+        <input name="green" id="green"  placeholder="0" type="number">
+        </form>
+        <button type="submit" id="show" value="show">Show color</button>
+        <button type="submit" id="clear" value="clear">Clear</button>
+    </div>
+
+</div>
+</body>
+</html>
+
+<script type="application/javascript">
+    // Gather color values
+    var redInput = document.querySelector("#red");
+    var blueInput = document.querySelector("#blue");
+    var greenInput = document.querySelector("#green");
+
+    // color submit & clear buttons button
+    var colorSubmitBtn = document.querySelector("#show");
+    colorSubmitBtn.addEventListener("click", clickHandler, false);
+
+    var clearBtn = document.querySelector("#clear");
+    clearBtn.addEventListener("click", clearAll, false);
+
+    // checks to make sure param inputNumber is between 0 & 255. returns true if it does
+    function checkColor(inputNumber) {
+        if (inputNumber <= 255 && inputNumber >= 0) {
+            if (isNaN(inputNumber)) {
+                return false;
+            }
+            return true;
+        }
+
+        return false;
+    }
+
+
+    function clickHandler() {
+        validateInput();
+    }
+
+    function clearAll() {
+        map.style.backgroundColor = 'rgb(' + 99 + ',' + 99 + ',' + 99 + ')';
+        redInput.value = 0;
+        blueInput.value = 0;
+        greenInput.value = 0;
+    }
+
+
+    function validateInput()
+    {
+        var redColor = parseInt(redInput.value);
+        var blueColor = parseInt(blueInput.value);
+        var greenColor = parseInt(greenInput.value);
+
+        // Make sure each value color value from the forms passes each boolean check with func checkColor
+        if (checkColor(redColor) && checkColor(blueColor) && checkColor(greenColor)) {
+            map.style.backgroundColor =  'rgb(' + redColor + ',' + greenColor + ',' + blueColor + ')';
+        }
+        else {
+            window.alert("Please enter a number from 0 to 255 for each color field.");
+            // console.log("Failed tests");
+        }
+    }
+</script>
