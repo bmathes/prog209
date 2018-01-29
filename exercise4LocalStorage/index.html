@@ -1,0 +1,107 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>HTML 5 Web Storage</title>
+
+<link href="reset.css" type="text/css" rel="stylesheet" />
+
+<link href="webStorage_Style.css" type="text/css" rel="stylesheet" />
+
+<script>
+window.addEventListener("load",init);
+
+function init(){
+	if(typeof(Storage)!=="undefined"){
+	
+	display();
+	
+	var button=document.getElementById("button");
+	button.addEventListener("click",saveInfo);
+	}
+	
+	else{
+	//old browser
+	}
+}
+
+function saveInfo(){
+	var city=document.getElementById("city").value;
+	var comments=document.getElementById("comments").value;
+	var country = document.getElementById("country").value;
+	var zip = document.getElementById("zip").value;
+
+	
+	localStorage.setItem("cityName",city);
+	localStorage.setItem("userComments",comments);
+	localStorage.setItem("countryName", country);
+	localStorage.setItem("zipName", zip);
+	display();
+	
+}
+
+function display(){
+    // rightBox not used locally
+	var rightBox=document.getElementById("useroutput");
+	var theCity=localStorage.getItem("cityName");
+	var theComments=localStorage.getItem("userComments");
+        var theCountry = localStorage.getItem("countryName");
+        var theZip = localStorage.getItem("zipName");
+
+        if(theComments==undefined || theCity == undefined || theCountry == undefined || theZip == undefined){
+            document.getElementById("useroutput").innerHTML="";
+        }
+        else{
+            document.getElementById("useroutput").innerHTML=
+                "OUTPUT  <hr /><br /><br />" +
+                "The City: " + theCity + "" +
+                    "<br /><br />The Country: " + theCountry + "" +
+                    "<br /><br />The ZIP Code: " + theZip + "" +
+                "<br /><br />Donut Items: " + theComments;
+	}
+	
+}</script>
+
+
+
+</head>
+
+<body>
+
+<div id="main">
+    <section id="userinput">
+    INPUT <br>
+	<hr />
+    <br /><br />
+    <form>
+    
+    <div>City: <br /><input type="input" id="city" size="20">
+    </div>
+    <br />
+    <div>Country: <br /><input type="input" id="country" size="20">
+    </div>
+    <br />
+    <div>ZIP Code: <br /><input type="input" id="zip" size="5">
+    </div>
+    <br />
+    <div>Donut items:<br /> <textarea id="comments" rows="10"></textarea>
+    </div>
+    <br />
+    <div><input type="button" id="button" value="Save">
+    </div>
+    </form>
+    </section>
+    
+    
+    <section id="useroutput">
+ OUTPUT  
+ 	<hr />
+    <br /><br />
+    </section>
+
+</div>
+
+
+
+</body>
+</html>
