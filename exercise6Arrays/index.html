@@ -1,0 +1,52 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Exercise 6: Arrays</title>
+    <style type="text/css">
+        body {
+            font-family:"Trebuchet MS", Segoe, sans-serif;
+            margin:35px;
+        }
+    </style>
+</head>
+<body>
+
+<div id="main">
+</div>
+
+</body>
+</html>
+<script>
+
+    // Make sure each array has the same length
+    var planetNames = ["Jupiter", "Venus", "Saturn", "Mars", "Neptune"];
+    var distancesFromEarth = [5.2, 0.72, 9.5, 1.5, 30.1];
+    var sunnyInAugust = [false, true, false, true, false];
+
+    // Get the element main
+    var main = document.getElementById('main');
+
+    // Loop through the array up to the end and display information relating to each planet in the
+    // planetNames array. This works because all of the arrays are the same length. Each element
+    // relates to the same-positioned element in the planetNames array. This is a simple database.
+
+    for(var i = 0; i < planetNames.length; i++)
+    {
+        // Use span for inline elements. Use inline CSS to change color & boldness of planetNames 
+        main.innerHTML += '<br><span style="color:blue; font-weight: bold;"> ' + planetNames[i] + '</span>';
+        main.innerHTML += '<br> Distance from Earth: ' + distancesFromEarth[i] + ' astronomical units';
+        main.innerHTML += '<br> Sunny in August: ' + sunnyInAugust[i];
+        main.innerHTML += '<br> --------------------------------';
+    }
+
+    // Part 2: Create a conditional that will find out which planets are sunny in August.
+    // This  information should show output in the "main" div after it lists the planets.
+
+    main.innerHTML += "<br> These are the planets that are sunny in August: <br>";
+    for (var j = 0; j < planetNames.length; j++) {
+        if (sunnyInAugust[j] === true) {
+            main.innerHTML += planetNames[j] + "<br>";
+        }
+    }
+</script>
