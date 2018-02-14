@@ -562,13 +562,13 @@
     function render() {
         //Render the location
         output.innerHTML = map[mapLocation];
-        image.src = "/images/" + images[mapLocation];
+        image.src = "images/" + images[mapLocation];
 
         // if the user has won, change the image to a win screen
         if (win === true) {
             image.width = 444;
             image.height = 640;
-            image.src = "/images/" + images[9];
+            image.src = "images/" + images[9];
             output.innerHTML = map[9];
             //Clear the input field
             input.value = "";
