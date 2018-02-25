@@ -21,10 +21,7 @@ $(function() {
                 // sets the opacity to 50%
                 'opacity': 0.5,
                 // moves the image 600 pixels to the right of its current position
-                'margin-left': '+=600',
-                // changes the height to 50% of its original value after it moves to the right 600 pixels
-                'height': '50%'
-
+                'margin-left': '+=600'
                 // the animation takes 1500 milliseconds and uses the ease transition called easeInBack for a
                 // animation effect supplied by the jquery.easing.1.3.js file
             }, 1500, 'easeInBack');
