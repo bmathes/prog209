@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Exercise 7 part 2</title>
+    <style>
+        body {
+            margin: 20px;
+        }
+        p {
+            font-family: Arial, Helvetica, sans-serif;
+            font-weight: bold;
+        }
+        #changeIt {
+            position: absolute;
+            top: 100px;
+            left: 100px;
+            cursor: pointer;
+        }
+
+    </style>
+
+</head>
+<body>
+<p>The div content will change below once the dom is loaded.</p>
+<div id="changeIt">
+</div>
+</body>
+</html>
+
+
+<script src="https://code.jquery.com/jquery-3.0.0.min.js"></script>
+<script>window.jQuery || document.write('<script src="../../lib/jquery/jquery.min.js"><\/script>');</script>
+
+<script type='text/javascript'>
+    // anything inside $(document).ready() will only run once the DOM is ready for JavaScript code execution
+    $(document).ready(function() {
+
+      // assign $changeIt to the contents of the id changeIt
+      var $changeIt =  $("#changeIt");
+
+      // change the html of #changeIt with jquery. can also use $($changeIt).text("Brian Mathes");
+      $($changeIt).html("Brian Mathes");
+
+    });
+
+</script>
