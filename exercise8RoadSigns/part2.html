@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Part 2 Sign</title>
+</head>
+<body>
+<canvas width="800" height="800"></canvas>
+
+</body>
+<script>
+
+    var canvas = document.querySelector("canvas");
+    var context = canvas.getContext("2d");
+
+    context.save();	// save previous display state
+
+    // draw the white triangle. lineJoin should be round
+    context.lineJoin = "round";
+    context.fillStyle = "white";
+
+    context.beginPath();
+    context.moveTo(200, 200);
+    context.lineTo(80, 400);
+    context.lineTo(320, 400);
+    context.closePath();
+    context.fill();
+
+
+    // draw red lines around triangle
+    context.strokeStyle = "red";
+    context.lineWidth = 20;
+    context.stroke();
+
+    // restore previous display state. best practice is to
+    // call save before performing any transformations and to call restore right afterwards.
+    context.restore();
+    context.save();
+
+    // draw the first black line on the right side
+    context.lineWidth= 20;
+    context.beginPath();
+    context.moveTo(220, 275);
+    context.lineTo(220, 375);
+    context.stroke();
+    context.closePath();
+
+    // restore previous display state. best practice is to
+    // call save before performing any transformations and to call restore right afterwards.
+    context.restore();
+    context.save();
+
+    // draw the top part of the line on the left side
+    context.lineWidth= 20;
+    context.beginPath();
+    context.moveTo(185, 275);
+    context.lineTo(185, 310);
+
+    // draw the middle part of the line on the left side
+    context.lineTo(165, 335);
+
+    // draw the last part of the line on the left side
+    context.lineTo(165, 375);
+    context.stroke();
+    context.closePath();
+
+    context.restore();
+
+
+</script>
+</html>
