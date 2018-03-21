@@ -280,16 +280,171 @@
     var gameMessage = "Use the arrow keys to find your way back to Earth.";
     var blackHoleNear = false;
 
+    // object literal. can also set the map to an object literal &
+    // the alien ship.
     var spaceShip = {
         fuel: 15,
         titanium: 15,
         experience: 0,
         getShipStrength: function() {
             return Math.ceil((this.fuel + this.titanium) / 4);
+        },
+        trade: function() {
+            // Figure out how much spaceship.fuel the space base has
+            // and how much it should cost
+            var spaceBaseSupplies = spaceShip.experience + spaceShip.titanium;
+            var cost = Math.ceil(Math.random() * spaceBaseSupplies);
+
+            // Let the player buy spaceship.fuel if there's enough titanium
+            // to afford it
+            if(spaceShip.titanium > cost)
+            {
+                spaceShip.fuel += spaceBaseSupplies;
+                spaceShip.titanium -= cost;
+                spaceShip.experience += 3;
+
+                gameMessage = "You buy " + spaceBaseSupplies + " fuel"
+                    + " for " + cost + " titanium pieces. You gain 3 experience."
+            }
+            else
+            {
+                // Tell the player if they don't have enough titanium to buy fuel
+                spaceShip.experience += 1;
+                gameMessage = "You don't have enough titanium to buy fuel. You gain 1 experience."
+            }
+        },
+        fight: function() {
+            // A random number between 1 and the ship's strength
+            var spacePirateStrength = Math.ceil(Math.random() * spaceShip.getShipStrength() * 2);
+
+            if(spacePirateStrength > spaceShip.getShipStrength())
+            {
+                // The pirates take your titanium
+                var stolenTitanium = Math.round(spacePirateStrength / 2);
+                spaceShip.titanium -= stolenTitanium;
+
+                // Give the player some experience for trying
+                spaceShip.experience += 1;
+
+                // Update the game message
+                gameMessage
+                    = "You fight and LOSE " + stolenTitanium + " titanium pieces. You gain 1 exp."
+                    + " Spaceship's strength: " + spaceShip.getShipStrength()
+                    + " Space Pirate's strength: " + spacePirateStrength
+
+            }
+            else
+            {
+                // You win the space pirates' titanium
+                var spacePirateTitanium = Math.round(spacePirateStrength / 2);
+                spaceShip.titanium += spacePirateTitanium;
+
+                // Add some experience
+                spaceShip.experience += 3;
+
+                // Update the game message
+                gameMessage = "You fight and WIN 3 exp. & " + spacePirateTitanium + " titanium pieces."
+                    + " Your Ship's strength: " + spaceShip.getShipStrength() + " Space Pirate's strength: " + spacePirateStrength;
+            }
         }
     };
 
-    // Find space ship's starting position
+    var alienShip = {
+        moveAlien: function() {
+            // NOTE: If the global var blackHoleNear is true, do not move the alien else
+            // there will be collision & rendering issues later in the game.
+
+            if (blackHoleNear === false) {
+
+                // The 4 possible directions that the alien can move. Can use this with
+                // Space Ship to make a proper maze.
+                var UP = 1;
+                var DOWN = 2;
+                var LEFT = 3;
+                var RIGHT = 4;
+
+                // An array to store the valid direction that
+                // the alien or space ship is allowed to move in
+                var validDirections = [];
+
+                //The final direction that the alien will move in
+                var direction = undefined;
+
+                // Find out what kinds of things are in the cells
+                // that surround the alien. If the cells contain space,
+                // push the corresponding direction into the validDirections array.
+
+
+                if (alienRow > 0) {
+                    var thingAbove = map[alienRow - 1][alienColumn]
+
+                    if (thingAbove === SPACE) {
+                        validDirections.push(UP);
+                    }
+                }
+                if (alienRow < ROWS - 1) {
+                    var thingBelow = map[alienRow + 1][alienColumn];
+                    if (thingBelow === SPACE) {
+                        validDirections.push(DOWN);
+                    }
+                }
+                if (alienColumn > 0) {
+                    var thingToTheLeft = map[alienRow][alienColumn - 1];
+                    if (thingToTheLeft === SPACE) {
+                        validDirections.push(LEFT);
+                    }
+                }
+                if (alienColumn < COLUMNS - 1) {
+                    var thingToTheRight = map[alienRow][alienColumn + 1];
+                    if (thingToTheRight === SPACE) {
+                        validDirections.push(RIGHT);
+                    }
+                }
+
+                //The validDirections array now contains 0 to 4 directions that the
+                //contain SPACE cells.
+
+                //If a valid direction was found, Randomly choose one of the
+                //possible directions and assign it to the direction variable
+                if (validDirections.length !== 0) {
+                    var randomNumber = Math.floor(Math.random() * validDirections.length);
+                    direction = validDirections[randomNumber];
+                }
+
+                // Move the alien in the chosen direction
+                switch (direction) {
+                    case UP:
+                        //Clear the alien's current cell
+                        gameObjects[alienRow][alienColumn] = 0;
+                        //Subtract 1 from the alien's row
+                        alienRow--;
+                        //Apply the alien's new updated position to the array
+                        gameObjects[alienRow][alienColumn] = ALIEN;
+                        break;
+
+                    case DOWN:
+                        gameObjects[alienRow][alienColumn] = 0;
+                        alienRow++;
+                        gameObjects[alienRow][alienColumn] = ALIEN;
+                        break;
+
+                    case LEFT:
+                        gameObjects[alienRow][alienColumn] = 0;
+                        alienColumn--;
+                        gameObjects[alienRow][alienColumn] = ALIEN;
+                        break;
+
+                    case RIGHT:
+                        gameObjects[alienRow][alienColumn] = 0;
+                        alienColumn++;
+                        gameObjects[alienRow][alienColumn] = ALIEN;
+                }
+            }
+        }
+    };
+
+    // Find space & alien ship's starting position & set them.
+    // can set it in the object literal but is way way easier to use global vars for this part.
     for(var row = 0; row < ROWS; row++)
     {
         for(var column = 0; column < COLUMNS; column++)
@@ -306,6 +461,8 @@
             }
         }
     }
+
+    // begin render. second render will be in keydownhandler function
     render();
 
 
@@ -330,9 +487,6 @@
                         // for gameMessage / state issues below
                         blackHole();
                     }
-
-
-
 
                     else {
                         //Clear the ship's current cell
@@ -415,7 +569,6 @@
         switch(map[spaceShipRow][spaceShipColumn])
         {
             case SPACE:
-
                 // this is needed since we don't have a blackhole cell we actually go in to
                 // & gamemessage error for blackhole would not display properly otherwise
                 if(blackHoleNear === true) {
@@ -431,11 +584,11 @@
                 break;
 
             case SPACEPIRATE:
-                fight();
+                spaceShip.fight();
                 break;
 
             case SPACESTATION:
-                trade();
+                spaceShip.trade();
                 break;
 
             case EARTH:
@@ -444,7 +597,7 @@
         }
 
         // Move the alien
-        moveAlien();
+        alienShip.moveAlien();
 
 
         //Find out if the ship is touching the alien
@@ -466,286 +619,15 @@
         render();
     }
 
-
-    function moveSpaceShip(eventKey) {
-/*        // Move the spaceShip in the chosen direction if valid
-
-        //The final direction that the space ship will move in
-        var directionSpaceShip = undefined;
-
-        // valid directions for the space ship
-        var invalidDirectionsSpaceShip =[];
-
-        // Find out whats around the space ship.
-
-        // checks above
-        if (spaceShipRow > 0) {
-            var aboveSpaceShip = map[spaceShipRow -1][spaceShipColumn];
-            if (aboveSpaceShip === SPACE) {
-                // adds the direction above the space as valid if it is space
-                invalidDirectionsSpaceShip.push(UP);
-            }
-        }
-
-        // checks below
-        if (spaceShipRow < ROWS - 1) {
-            // checks to see if the row below spaceShipRow is space & therefore valid
-            var belowSpaceShip = map[spaceShipRow + 1][spaceShipColumn];
-            if(belowSpaceShip === SPACE)
-            {
-                invalidDirectionsSpaceShip.push(DOWN);
-            }
-        }
-
-        // checks left
-        if (spaceShipColumn > 0) {
-            // checks to see if the column to left of spaceShipRow is space & therefore valid
-            var leftSpaceShip = map[spaceShipRow][spaceShipColumn - 1];
-            if(leftSpaceShip === SPACE)
-            {
-                invalidDirectionsSpaceShip.push(LEFT);
-            }
-        }
-
-        // checks right
-        if (spaceShipColumn < COLUMNS - 1){
-            // checks to see if the column to right of spaceShipRow is space & therefore valid
-            var rightSpaceShip = map[spaceShipRow][spaceShipColumn +1];
-            if (rightSpaceShip === SPACE) {
-                invalidDirectionsSpaceShip.push(RIGHT);
-            }
-        }
-
-        console.log('entering if statement');
-        // If a valid direction was found, assign it to the directionSpaceShip variable
-        // possible directions and assign it to the direction variable
-        if(invalidDirectionsSpaceShip.length !== 0)
-        {
-            console.log('entered if statement');
-            directionSpaceShip = invalidDirectionsSpaceShip[eventKey.key];
-        }
-        else {
-            console.log('error before movement');
-        }
-
-
-        switch(directionSpaceShip)
-        {
-            case UP:
-                if(spaceShipRow > 0)
-                {
-                    //Clear the ship's current cell
-                    gameObjects[spaceShipRow][spaceShipColumn] = 0;
-
-                    //Subtract 1 from the ship's row
-                    spaceShipRow--;
-
-                    //Apply the ship's new updated position to the array
-                    gameObjects[spaceShipRow][spaceShipColumn] = SHIP;
-                }
-                break;
-
-            case DOWN:
-                if(spaceShipRow < ROWS - 1)
-                {
-                    gameObjects[spaceShipRow][spaceShipColumn] = 0;
-                    spaceShipRow++;
-                    gameObjects[spaceShipRow][spaceShipColumn] = SHIP;
-                }
-                break;
-
-            case LEFT:
-                if(spaceShipColumn > 0)
-                {
-                    gameObjects[spaceShipRow][spaceShipColumn] = 0;
-                    spaceShipColumn--;
-                    gameObjects[spaceShipRow][spaceShipColumn] = SHIP;
-                }
-                break;
-
-            case RIGHT:
-                if(spaceShipColumn < COLUMNS - 1)
-                {
-                    gameObjects[spaceShipRow][spaceShipColumn] = 0;
-                    spaceShipColumn++;
-                    gameObjects[spaceShipRow][spaceShipColumn] = SHIP;
-                }
-                break;
-            default:
-                console.log('error in switch statement');
-                break;
-        }*/
-
-    }
-
-    function moveAlien()
-    {
-        // NOTE: If the global var blackHoleNear is true, do not move the alien else
-        // there will be collision & rendering issues later in the game.
-
-        if (blackHoleNear === false) {
-
-            // The 4 possible directions that the alien can move. Can use this with
-            // Space Ship to make a proper maze.
-            var UP = 1;
-            var DOWN = 2;
-            var LEFT = 3;
-            var RIGHT = 4;
-
-            // An array to store the valid direction that
-            // the alien or space ship is allowed to move in
-            var validDirections = [];
-
-            //The final direction that the alien will move in
-            var direction = undefined;
-
-            // Find out what kinds of things are in the cells
-            // that surround the alien. If the cells contain space,
-            // push the corresponding direction into the validDirections array.
-
-
-            if (alienRow > 0) {
-                var thingAbove = map[alienRow - 1][alienColumn]
-
-                if (thingAbove === SPACE) {
-                    validDirections.push(UP);
-                }
-            }
-            if (alienRow < ROWS - 1) {
-                var thingBelow = map[alienRow + 1][alienColumn];
-                if (thingBelow === SPACE) {
-                    validDirections.push(DOWN);
-                }
-            }
-            if (alienColumn > 0) {
-                var thingToTheLeft = map[alienRow][alienColumn - 1];
-                if (thingToTheLeft === SPACE) {
-                    validDirections.push(LEFT);
-                }
-            }
-            if (alienColumn < COLUMNS - 1) {
-                var thingToTheRight = map[alienRow][alienColumn + 1];
-                if (thingToTheRight === SPACE) {
-                    validDirections.push(RIGHT);
-                }
-            }
-
-            //The validDirections array now contains 0 to 4 directions that the
-            //contain SPACE cells.
-
-            //If a valid direction was found, Randomly choose one of the
-            //possible directions and assign it to the direction variable
-            if (validDirections.length !== 0) {
-                var randomNumber = Math.floor(Math.random() * validDirections.length);
-                direction = validDirections[randomNumber];
-            }
-
-            // Move the alien in the chosen direction
-            switch (direction) {
-                case UP:
-                    //Clear the alien's current cell
-                    gameObjects[alienRow][alienColumn] = 0;
-                    //Subtract 1 from the alien's row
-                    alienRow--;
-                    //Apply the alien's new updated position to the array
-                    gameObjects[alienRow][alienColumn] = ALIEN;
-                    break;
-
-                case DOWN:
-                    gameObjects[alienRow][alienColumn] = 0;
-                    alienRow++;
-                    gameObjects[alienRow][alienColumn] = ALIEN;
-                    break;
-
-                case LEFT:
-                    gameObjects[alienRow][alienColumn] = 0;
-                    alienColumn--;
-                    gameObjects[alienRow][alienColumn] = ALIEN;
-                    break;
-
-                case RIGHT:
-                    gameObjects[alienRow][alienColumn] = 0;
-                    alienColumn++;
-                    gameObjects[alienRow][alienColumn] = ALIEN;
-            }
-        }
-    }
-
-    function trade()
-    {
-        // Figure out how much spaceship.fuel the space base has
-        // and how much it should cost
-        var spaceBaseSupplies = spaceShip.experience + spaceShip.titanium;
-        var cost = Math.ceil(Math.random() * spaceBaseSupplies);
-
-        // Let the player buy spaceship.fuel if there's enough titanium
-        // to afford it
-        if(spaceShip.titanium > cost)
-        {
-            spaceShip.fuel += spaceBaseSupplies;
-            spaceShip.titanium -= cost;
-            spaceShip.experience += 3;
-
-            gameMessage = "You buy " + spaceBaseSupplies + " fuel"
-                + " for " + cost + " titanium pieces. You gain 3 experience."
-        }
-        else
-        {
-            // Tell the player if they don't have enough titanium to buy fuel
-            spaceShip.experience += 1;
-            gameMessage = "You don't have enough titanium to buy fuel. You gain 1 experience."
-        }
-    }
-
     function blackHole() {
-
         // even though we use spaceship.fuel-- here, we actually lose
         // two spaceship.fuel due to movement taking one spaceship.fuel which happens after this method
         spaceShip.fuel--;
 
         // set global bool value to true so gameMessage can be displayed later
         blackHoleNear = true;
-
     }
 
-    function fight()
-    {
-
-
-
-        // A random number between 1 and the ship's strength
-        var spacePirateStrength = Math.ceil(Math.random() * spaceShip.getShipStrength() * 2);
-
-        if(spacePirateStrength > spaceShip.getShipStrength())
-        {
-            // The pirates take your titanium
-            var stolenTitanium = Math.round(spacePirateStrength / 2);
-            spaceShip.titanium -= stolenTitanium;
-
-            // Give the player some experience for trying
-            spaceShip.experience += 1;
-
-            // Update the game message
-            gameMessage
-                = "You fight and LOSE " + stolenTitanium + " titanium pieces. You gain 1 exp."
-                + " Spaceship's strength: " + spaceShip.getShipStrength()
-                + " Space Pirate's strength: " + spacePirateStrength
-
-        }
-        else
-        {
-            // You win the space pirates' titanium
-            var spacePirateTitanium = Math.round(spacePirateStrength / 2);
-            spaceShip.titanium += spacePirateTitanium;
-
-            // Add some experience
-            spaceShip.experience += 3;
-
-            // Update the game message
-            gameMessage = "You fight and WIN 3 exp. & " + spacePirateTitanium + " titanium pieces."
-                + " Your Ship's strength: " + spaceShip.getShipStrength() + " Space Pirate's strength: " + spacePirateStrength;
-        }
-    }
 
 
     function endGame()
@@ -782,8 +664,6 @@
         //Remove the keyboard listener to end the game
         window.removeEventListener("keydown", keydownHandler, false);
 
-        // Call the endgamehandler which will display the end screen with their score & a restart button
-        endGameHandler();
     }
 
     function render()
@@ -877,6 +757,7 @@
         blackHoleNear = false;
 
     }
+    
     var startBtn = document.querySelector("#start");
     startBtn.addEventListener("click",startGameHandler,false);
     function startGameHandler() {
@@ -884,12 +765,7 @@
         introScreen.style.display = "none";
         game.style.display = "block";
     }
-    function endGameHandler() {
-        // Hide the intro screen & game screen & show end screen
-        introScreen.style.display = "none";
-        gameScreen.style.display = "none";
-        endScreen.style.display = "block";
-    }
+
 
 
 </script>
