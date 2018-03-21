@@ -1,0 +1,877 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Adventures in Space</title>
+<link href="https://fonts.googleapis.com/css?family=Faster+One" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css?family=Orbitron" rel="stylesheet">
+<script src="https://code.jquery.com/jquery-3.0.0.min.js"></script>
+<style>
+    *
+    {
+        padding: 0px;
+        margin: 0px;
+        font-family: 'Open Sans', sans-serif;
+        color: #C9C0BB;
+        font-size: 16px;
+    }
+
+    body {
+        background: gray url("https://raw.githubusercontent.com/bmathes/prog209/master/adventuregame/images/background.jpg");
+    }
+    #stage
+    {
+        /*change to 800 by 600 & background2.png */
+        position: relative;
+        /* 64 x 8 = 512 */
+        width: 512px;
+        height: 512px;
+        margin: auto;
+
+        /*CC0 attribution: https://opengameart.org/content/space-background-2*/
+        background-image: url("../images/background3.png");
+    }
+
+    .cell
+    {
+        display: block;
+        position: absolute;
+        width: 64px;
+        height: 64px;
+    }
+
+    #game
+    {
+        width: 800px;
+        height: 600px;
+        margin: 10px;
+        border: 1px dashed white;
+        display: none;
+        margin: auto;
+        width: 50%;
+
+
+    }
+
+    #introScreen {
+
+        height: 600px;
+
+        position: relative;
+        margin: auto;
+        width: 50%;
+
+    }
+
+    #introScreen h3 {
+        clear: both;
+        font-family: 'Orbitron', sans-serif;
+        margin-top: 40px;
+    }
+    #introScreen div {
+        margin-top: 40px;
+        text-align: center;
+    }
+
+    #title {
+        
+        padding-top: 10px;
+        font-size: 32px;
+        line-height: 1.1em;
+        font-family: 'Orbitron', sans-serif;
+
+    }
+    h1
+    {
+        text-align: center;
+        font-family: 'Orbitron', sans-serif;
+        font-size: 50px;
+        color: #2980b9;
+    }
+
+    p
+    {
+        font-family: 'Open Sans', sans-serif;
+        font-size: 20px;
+        width: 500px;
+        padding: 10px;
+    }
+
+    .btn {
+        background: #3498db;
+        background-image: -webkit-linear-gradient(top, #3498db, #2980b9);
+        background-image: -moz-linear-gradient(top, #3498db, #2980b9);
+        background-image: -ms-linear-gradient(top, #3498db, #2980b9);
+        background-image: -o-linear-gradient(top, #3498db, #2980b9);
+        background-image: linear-gradient(to bottom, #3498db, #2980b9);
+        -webkit-border-radius: 28;
+        -moz-border-radius: 28;
+        border-radius: 28px;
+        font-family: Arial;
+        color: #ffffff;
+        font-size: 16px;
+        padding: 5px 10px 5px 10px;
+        text-decoration: none;
+    }
+
+    .btn:hover {
+        background: #3cb0fd;
+        background-image: -webkit-linear-gradient(top, #3cb0fd, #3498db);
+        background-image: -moz-linear-gradient(top, #3cb0fd, #3498db);
+        background-image: -ms-linear-gradient(top, #3cb0fd, #3498db);
+        background-image: -o-linear-gradient(top, #3cb0fd, #3498db);
+        background-image: linear-gradient(to bottom, #3cb0fd, #3498db);
+        text-decoration: none;
+    }
+
+    button#start {
+
+        font-family: spaceAge;
+        font-size: 150%;
+        padding: 4px 8px;
+        cursor: pointer;
+        color: white;
+
+        -webkit-border-radius: 10px;
+        -moz-border-radius: 10px;
+        border-radius: 10px;
+
+        background: -webkit-linear-gradient(top, #a3a3a3, #000);
+        background: -moz-linear-gradient(top, #a3a3a3, #000);
+        background: linear-gradient(top, #a3a3a3, #000);
+
+        -webkit-box-shadow: 0px 5px 8px 3px rgba(255,255,255,0.3);
+        -moz-box-shadow: 0px 5px 8px 3px rgba(255,255,255,0.3);
+        box-shadow: 0px 5px 8px 3px rgba(255,255,255,0.3);
+    }
+
+    button#start:hover {
+        background: -webkit-linear-gradient(top, #acc7a3, #506651);
+        background: -moz-linear-gradient(top, #acc7a3, #506651);
+        background: linear-gradient(top, #acc7a3, #506651);
+    }
+
+</style>
+
+
+<section id="introScreen">
+    <br>
+    <span id="title">Adventures in Space!</span>
+    <h3>How to play:</h3>
+    <p>1.)Use the arrow keys to move the space ship up, down, left, & right. <br>2.)Try to reach Earth without losing all your fuel & titanium. <br>3.)Avoid the black holes & the alien monster. Alien monster kills you in one hit. <br>4.) Space Stations provide a chance to get more fuel at a random cost of titanium. <br>5.) Pirate ships give you a chance of losing or gaining more titanium at random.<br>6.) Gain experience by trying to kill pirate ships & buying fuel from space stations <br>7.) Your score will be calculated at the end based on your experience, titanium, and fuel.</p>
+    <div>
+        <button id="start">Start!</button>
+    </div>
+</section>
+
+
+<section id="game">
+    <h1>Adventures in Space</h1>
+    <div id="stage"></div>
+    <br>
+    <p id="output"></p>
+    <audio id="song">
+    <source src="../music/through_space.ogg" type="audio/ogg">
+    </audio>
+
+    <div id="info">
+    <button class="btn" onclick="document.getElementById('song').play()">Play Music</button>
+    <button class="btn" onclick="document.getElementById('song').pause()">Pause Music</button>
+    </div>
+
+</section>
+
+<script>
+    // there's some weird rendering issue where if the ship goes
+    // where the alien used to be, the ship does not appear after render. this is present in the
+    // original island adventure code as well.
+
+    // start the song using jquery
+    $('audio#song')[0].play();
+
+    //Get a reference to the stage and output
+    var stage = document.querySelector("#stage");
+    var output = document.querySelector("#output");
+
+
+    // Add a keyboard listener. KeyboardEvent.keyCode is deprecated and
+    // KeyboardEvent.key should be used
+    // ref: https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/key
+    // but I couldn't find a way to make it work with this game so I had to use keyCodes
+
+    window.addEventListener("keydown", keydownHandler, false);
+    // The game map should be 8x8 at least not 6x6. Positioning of the monster is an issue
+    // if the minimum amount of turns to reach the alien is not odd, there will be rendering issues
+    // this is important to remember since the monster should not move if we bump into a black hole
+    // else we will have more rendering issues.
+    const map =
+        [
+            [0, 2, 0, 0, 6, 0, 0, 3],
+            [0, 0, 0, 1, 0, 0, 0, 0],
+            [0, 1, 0, 0, 0, 0, 6, 0],
+            [0, 0, 0, 0, 2, 0, 0, 0],
+            [2, 0, 0, 1, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 1],
+            [0, 1, 0, 0, 0, 2, 0, 0],
+            [0, 0, 0, 6, 0, 0, 0, 0]
+        ];
+
+    // The game objects map. Should be same size as game map.
+    const gameObjects =
+        [
+            [0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 5, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0],
+            [4, 0, 0, 0, 0, 0, 0, 0]
+        ];
+
+
+    // Map code
+    var SPACE = 0;
+    var SPACESTATION = 1;
+    var SPACEPIRATE = 2;
+    var EARTH = 3;
+    var SHIP = 4;
+    var ALIEN = 5;
+    var BLACKHOLE = 6;
+
+    //The size of each cell in pixels
+    var SIZE = 64;
+
+    //The number of rows and columns
+    var ROWS = map.length;
+    var COLUMNS = map[0].length;
+
+    // Find the ship's and aliens's start positions
+    var spaceShipRow;
+    var spaceShipColumn;
+    var alienRow;
+    var alienColumn;
+
+
+    // Arrow key codes global constants
+    var UP = 38;
+    var DOWN = 40;
+    var RIGHT = 39;
+    var LEFT = 37;
+
+    //The game variables
+
+    var gameMessage = "Use the arrow keys to find your way back to Earth.";
+    var blackHoleNear = false;
+
+    var spaceShip = {
+        fuel: 15,
+        titanium: 15,
+        experience: 0,
+        getShipStrength: function() {
+            return Math.ceil((this.fuel + this.titanium) / 4);
+        }
+    };
+
+    // Find space ship's starting position
+    for(var row = 0; row < ROWS; row++)
+    {
+        for(var column = 0; column < COLUMNS; column++)
+        {
+            if(gameObjects[row][column] === SHIP)
+            {
+                spaceShipRow = row;
+                spaceShipColumn = column;
+            }
+            if(gameObjects[row][column] === ALIEN)
+            {
+                alienRow = row;
+                alienColumn = column;
+            }
+        }
+    }
+    render();
+
+
+
+    function keydownHandler(event)
+    {
+
+        console.log('entering switch statement');
+
+        switch(event.keyCode)
+        {
+            case UP:
+                // Find out whats around the space ship & if it is a black hole
+
+                // checks above the spaceShip for blackholes by subtracting 1
+                // from ship row
+                if (spaceShipRow > 0) {
+                    let aboveSpaceShip = map[spaceShipRow -1][spaceShipColumn];
+                    if (aboveSpaceShip === BLACKHOLE) {
+                        // executes blackhole function display error message & subtracts two fuel
+                        // total after keydown is pressed. sets global bool var to blackHoleNear to true.
+                        // for gameMessage / state issues below
+                        blackHole();
+                    }
+
+
+
+
+                    else {
+                        //Clear the ship's current cell
+                        gameObjects[spaceShipRow][spaceShipColumn] = 0;
+
+                        //Subtract 1 from the ship's row
+                        spaceShipRow--;
+
+                        //Apply the ship's new updated position to the array
+                        gameObjects[spaceShipRow][spaceShipColumn] = SHIP;
+                    }
+                }
+                break;
+
+            case DOWN:
+                if(spaceShipRow < ROWS - 1)
+                {
+                    let belowSpaceShip = map[spaceShipRow + 1][spaceShipColumn];
+                    if(belowSpaceShip === BLACKHOLE)
+                    {
+                        // executes blackhole function display error message & subtracts two fuel
+                        // total after keydown is pressed. sets global bool var to blackHoleNear to true.
+                        // for gameMessage / state issues below
+                        blackHole();
+                    }
+                    else {
+                        gameObjects[spaceShipRow][spaceShipColumn] = 0;
+                        spaceShipRow++;
+                        gameObjects[spaceShipRow][spaceShipColumn] = SHIP;
+                    }
+                }
+                break;
+
+            case LEFT:
+                if(spaceShipColumn > 0)
+                {
+                    let leftSpaceShip = map[spaceShipRow][spaceShipColumn - 1];
+                    if(leftSpaceShip === BLACKHOLE)
+                    {
+                        // executes blackhole function display error message & subtracts two spaceship.fuel
+                        // total after keydown is pressed. sets global bool var to blackHoleNear to true.
+                        // for gameMessage / state issues below
+                        blackHole();
+                    }
+                    else {
+                        gameObjects[spaceShipRow][spaceShipColumn] = 0;
+                        spaceShipColumn--;
+                        gameObjects[spaceShipRow][spaceShipColumn] = SHIP;
+                    }
+                }
+                break;
+
+            case RIGHT:
+                if(spaceShipColumn < COLUMNS - 1)
+                {
+                    let rightSpaceShip = map[spaceShipRow][spaceShipColumn +1];
+                    if (rightSpaceShip === BLACKHOLE) {
+                        // executes blackhole function display error message & subtracts two fuel
+                        // total after keydown is pressed. sets global bool var to blackHoleNear to true.
+                        // for gameMessage / state issues below
+                        blackHole();
+                    }
+
+
+                    else {
+                        gameObjects[spaceShipRow][spaceShipColumn] = 0;
+                        spaceShipColumn++;
+                        gameObjects[spaceShipRow][spaceShipColumn] = SHIP;
+                    }
+                }
+                break;
+
+            default:
+                console.log('reached default');
+                // using return is best practice according to moz.dev
+                return;
+        }
+
+        // find out what kind of cell the space ship is on & execute function accordingly
+        switch(map[spaceShipRow][spaceShipColumn])
+        {
+            case SPACE:
+
+                // this is needed since we don't have a blackhole cell we actually go in to
+                // & gamemessage error for blackhole would not display properly otherwise
+                if(blackHoleNear === true) {
+                    // Update the game message. display (spaceship.fuel -1) is needed since spaceship.fuel-- is also applied after
+                    // this function
+                    gameMessage = "You can't go into a blackhole! You have to turn back" +
+                        " & barely get out alive. You lose two fuel."
+                        + " You have " + (spaceShip.fuel - 1) + " fuel left.";
+                }
+                else {
+                    gameMessage = "You fly through space at almost the speed of light.";
+                }
+                break;
+
+            case SPACEPIRATE:
+                fight();
+                break;
+
+            case SPACESTATION:
+                trade();
+                break;
+
+            case EARTH:
+                endGame();
+                break;
+        }
+
+        // Move the alien
+        moveAlien();
+
+
+        //Find out if the ship is touching the alien
+        if(gameObjects[spaceShipRow][spaceShipColumn] === ALIEN)
+        {
+            endGame();
+        }
+
+        // Subtract one fuel each time a turn is made
+        spaceShip.fuel--;
+
+        // Find out if the ship has run out of fuel or titanium
+        if(spaceShip.fuel <= 0 || spaceShip.titanium <= 0)
+        {
+            endGame();
+        }
+
+        //Render the game
+        render();
+    }
+
+
+    function moveSpaceShip(eventKey) {
+/*        // Move the spaceShip in the chosen direction if valid
+
+        //The final direction that the space ship will move in
+        var directionSpaceShip = undefined;
+
+        // valid directions for the space ship
+        var invalidDirectionsSpaceShip =[];
+
+        // Find out whats around the space ship.
+
+        // checks above
+        if (spaceShipRow > 0) {
+            var aboveSpaceShip = map[spaceShipRow -1][spaceShipColumn];
+            if (aboveSpaceShip === SPACE) {
+                // adds the direction above the space as valid if it is space
+                invalidDirectionsSpaceShip.push(UP);
+            }
+        }
+
+        // checks below
+        if (spaceShipRow < ROWS - 1) {
+            // checks to see if the row below spaceShipRow is space & therefore valid
+            var belowSpaceShip = map[spaceShipRow + 1][spaceShipColumn];
+            if(belowSpaceShip === SPACE)
+            {
+                invalidDirectionsSpaceShip.push(DOWN);
+            }
+        }
+
+        // checks left
+        if (spaceShipColumn > 0) {
+            // checks to see if the column to left of spaceShipRow is space & therefore valid
+            var leftSpaceShip = map[spaceShipRow][spaceShipColumn - 1];
+            if(leftSpaceShip === SPACE)
+            {
+                invalidDirectionsSpaceShip.push(LEFT);
+            }
+        }
+
+        // checks right
+        if (spaceShipColumn < COLUMNS - 1){
+            // checks to see if the column to right of spaceShipRow is space & therefore valid
+            var rightSpaceShip = map[spaceShipRow][spaceShipColumn +1];
+            if (rightSpaceShip === SPACE) {
+                invalidDirectionsSpaceShip.push(RIGHT);
+            }
+        }
+
+        console.log('entering if statement');
+        // If a valid direction was found, assign it to the directionSpaceShip variable
+        // possible directions and assign it to the direction variable
+        if(invalidDirectionsSpaceShip.length !== 0)
+        {
+            console.log('entered if statement');
+            directionSpaceShip = invalidDirectionsSpaceShip[eventKey.key];
+        }
+        else {
+            console.log('error before movement');
+        }
+
+
+        switch(directionSpaceShip)
+        {
+            case UP:
+                if(spaceShipRow > 0)
+                {
+                    //Clear the ship's current cell
+                    gameObjects[spaceShipRow][spaceShipColumn] = 0;
+
+                    //Subtract 1 from the ship's row
+                    spaceShipRow--;
+
+                    //Apply the ship's new updated position to the array
+                    gameObjects[spaceShipRow][spaceShipColumn] = SHIP;
+                }
+                break;
+
+            case DOWN:
+                if(spaceShipRow < ROWS - 1)
+                {
+                    gameObjects[spaceShipRow][spaceShipColumn] = 0;
+                    spaceShipRow++;
+                    gameObjects[spaceShipRow][spaceShipColumn] = SHIP;
+                }
+                break;
+
+            case LEFT:
+                if(spaceShipColumn > 0)
+                {
+                    gameObjects[spaceShipRow][spaceShipColumn] = 0;
+                    spaceShipColumn--;
+                    gameObjects[spaceShipRow][spaceShipColumn] = SHIP;
+                }
+                break;
+
+            case RIGHT:
+                if(spaceShipColumn < COLUMNS - 1)
+                {
+                    gameObjects[spaceShipRow][spaceShipColumn] = 0;
+                    spaceShipColumn++;
+                    gameObjects[spaceShipRow][spaceShipColumn] = SHIP;
+                }
+                break;
+            default:
+                console.log('error in switch statement');
+                break;
+        }*/
+
+    }
+
+    function moveAlien()
+    {
+        // The 4 possible directions that the alien can move. Can use this with
+        // Space Ship to make a proper maze.
+        var UP = 1;
+        var DOWN = 2;
+        var LEFT = 3;
+        var RIGHT = 4;
+
+        // An array to store the valid direction that
+        // the alien or space ship is allowed to move in
+        var validDirections = [];
+
+        //The final direction that the alien will move in
+        var direction = undefined;
+
+        //Find out what kinds of things are in the cells
+        //that surround the alien. If the cells contain space,
+        //push the corresponding direction into the validDirections array
+        if(alienRow > 0)
+        {
+            var thingAbove = map[alienRow - 1][alienColumn]
+
+            if(thingAbove === SPACE)
+            {
+                validDirections.push(UP);
+            }
+        }
+        if(alienRow < ROWS - 1)
+        {
+            var thingBelow = map[alienRow + 1][alienColumn];
+            if(thingBelow === SPACE)
+            {
+                validDirections.push(DOWN);
+            }
+        }
+        if(alienColumn > 0)
+        {
+            var thingToTheLeft = map[alienRow][alienColumn - 1];
+            if(thingToTheLeft === SPACE)
+            {
+                validDirections.push(LEFT);
+            }
+        }
+        if(alienColumn < COLUMNS - 1)
+        {
+            var thingToTheRight = map[alienRow][alienColumn + 1];
+            if(thingToTheRight === SPACE)
+            {
+                validDirections.push(RIGHT);
+            }
+        }
+
+        //The validDirections array now contains 0 to 4 directions that the
+        //contain SPACE cells.
+
+        //If a valid direction was found, Randomly choose one of the
+        //possible directions and assign it to the direction variable
+        if(validDirections.length !== 0)
+        {
+            var randomNumber = Math.floor(Math.random() * validDirections.length);
+            direction = validDirections[randomNumber];
+        }
+
+        // Move the alien in the chosen direction
+        switch(direction)
+        {
+            case UP:
+                //Clear the alien's current cell
+                gameObjects[alienRow][alienColumn] = 0;
+                //Subtract 1 from the alien's row
+                alienRow--;
+                //Apply the alien's new updated position to the array
+                gameObjects[alienRow][alienColumn] = ALIEN;
+                break;
+
+            case DOWN:
+                gameObjects[alienRow][alienColumn] = 0;
+                alienRow++;
+                gameObjects[alienRow][alienColumn] = ALIEN;
+                break;
+
+            case LEFT:
+                gameObjects[alienRow][alienColumn] = 0;
+                alienColumn--;
+                gameObjects[alienRow][alienColumn] = ALIEN;
+                break;
+
+            case RIGHT:
+                gameObjects[alienRow][alienColumn] = 0;
+                alienColumn++;
+                gameObjects[alienRow][alienColumn] = ALIEN;
+        }
+    }
+
+    function trade()
+    {
+        // Figure out how much spaceship.fuel the space base has
+        // and how much it should cost
+        var spaceBaseSupplies = spaceShip.experience + spaceShip.titanium;
+        var cost = Math.ceil(Math.random() * spaceBaseSupplies);
+
+        // Let the player buy spaceship.fuel if there's enough titanium
+        // to afford it
+        if(spaceShip.titanium > cost)
+        {
+            spaceShip.fuel += spaceBaseSupplies;
+            spaceShip.titanium -= cost;
+            spaceShip.experience += 3;
+
+            gameMessage = "You buy " + spaceBaseSupplies + " fuel"
+                + " for " + cost + " titanium pieces. You gain 3 experience."
+        }
+        else
+        {
+            // Tell the player if they don't have enough titanium to buy fuel
+            spaceShip.experience += 1;
+            gameMessage = "You don't have enough titanium to buy fuel. You gain 1 experience."
+        }
+    }
+
+    function blackHole() {
+
+        // even though we use spaceship.fuel-- here, we actually lose
+        // two spaceship.fuel due to movement taking one spaceship.fuel which happens after this method
+        spaceShip.fuel--;
+
+        // set global bool value to true so gameMessage can be displayed later
+        blackHoleNear = true;
+
+    }
+
+    function fight()
+    {
+
+
+
+        // A random number between 1 and the ship's strength
+        var spacePirateStrength = Math.ceil(Math.random() * spaceShip.getShipStrength() * 2);
+
+        if(spacePirateStrength > spaceShip.getShipStrength())
+        {
+            // The pirates take your titanium
+            var stolenTitanium = Math.round(spacePirateStrength / 2);
+            spaceShip.titanium -= stolenTitanium;
+
+            // Give the player some experience for trying
+            spaceShip.experience += 1;
+
+            // Update the game message
+            gameMessage
+                = "You fight and LOSE " + stolenTitanium + " titanium pieces. You gain 1 exp."
+                + " Spaceship's strength: " + spaceShip.getShipStrength()
+                + " Space Pirate's strength: " + spacePirateStrength
+
+        }
+        else
+        {
+            // You win the space pirates' titanium
+            var spacePirateTitanium = Math.round(spacePirateStrength / 2);
+            spaceShip.titanium += spacePirateTitanium;
+
+            // Add some experience
+            spaceShip.experience += 3;
+
+            // Update the game message
+            gameMessage = "You fight and WIN 3 exp. & " + spacePirateTitanium + " titanium pieces."
+                + " Your Ship's strength: " + spaceShip.getShipStrength() + " Space Pirate's strength: " + spacePirateStrength;
+        }
+    }
+
+    function endGame()
+    {
+        if(map[spaceShipRow][spaceShipColumn] === EARTH)
+        {
+            // Calculate the score
+            var score = spaceShip.fuel + spaceShip.titanium + spaceShip.experience;
+
+            // Display the winning game message
+            gameMessage = "You made it back to Earth. You Win! " + "Final Score: " + score;
+        }
+        else if(gameObjects[spaceShipRow][spaceShipColumn] === ALIEN)
+        {
+            // Display
+            gameMessage = "The alien swallows your ship whole. You lose!";
+        }
+        else
+        {
+            // Display the respective game message regarding titanium & spaceship.fuel
+            if(spaceShip.titanium <= 0)
+            {
+                gameMessage += " You've run out of titanium! You lose. ";
+            }
+            else
+            {
+                gameMessage = " You've run out of fuel! You lose. ";
+            }
+
+            gameMessage
+                += " Your crew takes the escape pods while you're left to go down with the spaceship";
+        }
+
+        //Remove the keyboard listener to end the game
+        window.removeEventListener("keydown", keydownHandler, false);
+    }
+
+    function render()
+    {
+        //Clear the stage of img cells
+        //from the previous turn
+
+        if(stage.hasChildNodes())
+        {
+            for(var i = 0; i < ROWS * COLUMNS; i++)
+            {
+                stage.removeChild(stage.firstChild);
+            }
+        }
+
+        //Render the game by looping through the map arrays
+        for(var row = 0; row < ROWS; row++)
+        {
+            for(var column = 0; column < COLUMNS; column++)
+            {
+                //Create a img tag called cell
+                var cell = document.createElement("img");
+
+                //Set it's CSS class to "cell"
+                cell.setAttribute("class", "cell");
+
+                //Add the img tag to the <div id="stage"> tag
+                stage.appendChild(cell);
+
+                // Find the correct image for this map cell
+                switch(map[row][column])
+                {
+                    case SPACE:
+                        cell.src = "../images/space.png";
+                        break;
+
+                    case SPACESTATION:
+                        // attribution CC-BY 3.0: MillionthVector http://millionthvector.blogspot.de
+                        // https://opengameart.org/content/set-faction9-spacestations
+                        cell.src = "../images/spacestation2.png";
+                        break;
+
+                    case SPACEPIRATE:
+                        // attribution CC-BY 3.0: MillionthVector http://millionthvector.blogspot.de
+                        // https://opengameart.org/content/pack-spaceships-and-building
+                        cell.src = "../images/spacepirate.png";
+                        break;
+
+                    case EARTH:
+                        // attribution CC-BY 3.0: MillionthVector http://millionthvector.blogspot.de
+                        // https://opengameart.org/content/simple-planets-with-normalmap
+                        cell.src = "../images/earth.png";
+                        break;
+
+                    case BLACKHOLE:
+                        // attribution: https://commons.wikimedia.org/wiki/File:BlackHole.jpg
+                        // This file is in the public domain in the United States because it was solely created by NASA.
+                        // NASA copyright policy states that "NASA material is not protected by copyright unless noted
+                        cell.src ="../images/blackhole.png"
+                }
+
+                //Add the ship and alien from the gameObjects array
+                switch(gameObjects[row][column])
+                {
+                    case SHIP:
+                        // cc-by-sa 3.0 attribution: Skorpio @ https://opengameart.org/content/space-ship-construction-kit
+                        cell.src = "../images/spaceshiptest.png";
+                        break;
+
+                    case ALIEN:
+                        // cc0 attribution: https://opengameart.org/content/space-shooter-top-down-2d-pixel-art
+                        cell.src = "../images/alien2.png";
+                        break;
+                }
+
+                //Position the cell
+                cell.style.top = row * SIZE + "px";
+                cell.style.left = column * SIZE + "px";
+            }
+        }
+
+        // Display the game message
+        output.innerHTML = gameMessage;
+
+        // Display the player's spaceship.fuel, titanium, and experience
+        output.innerHTML
+            += "<br>Titanium: " + spaceShip.titanium + ", Fuel: "
+            + spaceShip.fuel + ", Experience: " + spaceShip.experience;
+
+        // reset blackHoleNear boolean condition
+        blackHoleNear = false;
+
+    }
+    var startBtn = document.querySelector("#start");
+    startBtn.addEventListener("click",startGameHandler,false);
+    function startGameHandler() {
+        // Hide the intro screen, show the game screen
+        introScreen.style.display = "none";
+        game.style.display = "block";
+    }
+    function endGameHandler() {
+        // Hide the intro screen & game screen & show end screen
+        introScreen.style.display = "none";
+        gameScreen.style.display = "block";
+    }
+
+</script>
+
+
+
