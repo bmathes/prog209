@@ -571,7 +571,8 @@
             spaceShip.winConditionMet = true;
         } else if (gameObjects[spaceShipRow][spaceShipColumn] === ALIEN) {
             // Display
-            gameMessage = "The alien swallows your ship whole. You lose!";
+            // Add Template Literal Plus Expressions
+            gameMessage = `The alien swallows your ship whole. You lose!`;
             restartBtn.style.display = "block";
         } else {
             // Display the respective game message regarding titanium & spaceship.fuel
@@ -580,7 +581,10 @@
             } else {
                 gameMessage = " You've run out of fuel! You lose. ";
             }
-            gameMessage += " Your crew takes the escape pods while you're left stranded";
+           // using template literals we can create multi-line strings easily. We want this text to be on the next line
+           // so we can use a template literal here
+            gameMessage += ` 
+Your crew takes the escape pods while you're left stranded`;
             restartBtn.style.display = "block";
         }
         //Remove the keyboard listener to end the game
