@@ -137,6 +137,33 @@
         text-decoration: none;
     }
 
+    button.restart {
+        display:none;
+        font-family: spaceAge;
+        font-size: 150%;
+        padding: 4px 8px;
+        cursor: pointer;
+        color: white;
+
+        -webkit-border-radius: 10px;
+        -moz-border-radius: 10px;
+        border-radius: 10px;
+
+        background: -webkit-linear-gradient(top, #a3a3a3, #000);
+        background: -moz-linear-gradient(top, #a3a3a3, #000);
+        background: linear-gradient(top, #a3a3a3, #000);
+
+        -webkit-box-shadow: 0px 5px 8px 3px rgba(255,255,255,0.3);
+        -moz-box-shadow: 0px 5px 8px 3px rgba(255,255,255,0.3);
+        box-shadow: 0px 5px 8px 3px rgba(255,255,255,0.3);
+    }
+
+    button.restart:hover {
+        background: -webkit-linear-gradient(top, #acc7a3, #506651);
+        background: -moz-linear-gradient(top, #acc7a3, #506651);
+        background: linear-gradient(top, #acc7a3, #506651);
+    }
+
     button#start {
 
         font-family: spaceAge;
@@ -181,6 +208,7 @@
 <section id="game">
     <h1>Adventures in Space</h1>
     <div id="stage"></div>
+    <button class="restart">Click here to restart the game</button>
     <br>
     <p id="output"></p>
     <audio id="song">
@@ -195,8 +223,8 @@
 </section>
 
 <section id="endScreen">
-    <br>
-    <span class="title">You lose!</span>
+    <span class="title">End Screen:</span>
+    <button class="restart">Click here to restart the game</button>
 </section>
 
 <script>
@@ -220,7 +248,7 @@
     // there will be rendering issues.
     // this is important to remember since the monster should not move if we bump into a black hole
     // else we will have more rendering issues.
-    const map =
+    var map =
         [
             [0, 2, 0, 0, 6, 0, 0, 3],
             [0, 0, 0, 1, 0, 0, 0, 0],
@@ -233,7 +261,7 @@
         ];
 
     // The game objects map. Should be same size as game map.
-    const gameObjects =
+    var gameObjects =
         [
             [0, 0, 0, 0, 0, 0, 0, 0],
             [0, 0, 0, 0, 0, 0, 0, 0],
@@ -247,16 +275,16 @@
 
 
     // Map code
-    var SPACE = 0;
-    var SPACESTATION = 1;
-    var SPACEPIRATE = 2;
-    var EARTH = 3;
-    var SHIP = 4;
-    var ALIEN = 5;
-    var BLACKHOLE = 6;
+    const SPACE = 0;
+    const SPACESTATION = 1;
+    const SPACEPIRATE = 2;
+    const EARTH = 3;
+    const SHIP = 4;
+    const ALIEN = 5;
+    const BLACKHOLE = 6;
 
     //The size of each cell in pixels
-    var SIZE = 64;
+    const SIZE = 64;
 
     //The number of rows and columns
     var ROWS = map.length;
@@ -286,6 +314,10 @@
         fuel: 15,
         titanium: 15,
         experience: 0,
+        winConditionMet: false,
+        getScore: function() {
+            return spaceShip.fuel + spaceShip.titanium + spaceShip.experience;
+        },
         getShipStrength: function() {
             return Math.ceil((this.fuel + this.titanium) / 4);
         },
@@ -634,11 +666,7 @@
     {
         if(map[spaceShipRow][spaceShipColumn] === EARTH)
         {
-            // Calculate the score
-            var score = spaceShip.fuel + spaceShip.titanium + spaceShip.experience;
-
-            // Display the winning game message
-            gameMessage = "You made it back to Earth. You Win! " + "Final Score: " + score;
+            spaceShip.winConditionMet = true;
         }
         else if(gameObjects[spaceShipRow][spaceShipColumn] === ALIEN)
         {
@@ -658,11 +686,29 @@
             }
 
             gameMessage
-                += " Your crew takes the escape pods while you're left to go down with the spaceship";
+                += " Your crew takes the escape pods while you're left stranded";
+                restartBtn.style.display = "block";
         }
 
         //Remove the keyboard listener to end the game
         window.removeEventListener("keydown", keydownHandler, false);
+
+        // assign endScreen to variable. only use endscreen if user wins.
+
+        let endScreen = document.querySelector("#endScreen");
+        // hide both intro & game screen. change end game display to block
+
+        if (spaceShip.winConditionMet === true) {
+            // only display endscreen if you win. otherwise, user will see why they lost.
+            introScreen.style.display = "none";
+            game.style.display = "none";
+            endScreen.style.display ="block";
+            endScreen.innerHTML = "<h3>Congratulations! You win!</h3> Your final score is: " + spaceShip.getScore();
+            endScreen.innerHTML += "<br>Your score is equal to your fuel + titanium + experience that you earned";
+            endScreen.innerHTML += "<br>Click the button to try and gain a higher score";
+            restartBtn.style.display = "block";
+        }
+
 
     }
 
@@ -757,13 +803,81 @@
         blackHoleNear = false;
 
     }
-    
+
     var startBtn = document.querySelector("#start");
     startBtn.addEventListener("click",startGameHandler,false);
+
+    var restartBtn = document.querySelector(".restart");
+    restartBtn.addEventListener("click", restartHandler, false);
+
     function startGameHandler() {
         // Hide the intro screen, show the game screen
         introScreen.style.display = "none";
         game.style.display = "block";
+    }
+
+    function restartHandler() {
+        introScreen.style.display = "block";
+        game.style.display = "none";
+        resetGlobalVariables();
+    }
+
+    function resetGlobalVariables() {
+        // reset all important variables & reset addEventListener
+        window.addEventListener("keydown", keydownHandler, false);
+
+        map =
+            [
+                [0, 2, 0, 0, 6, 0, 0, 3],
+                [0, 0, 0, 1, 0, 0, 0, 0],
+                [0, 1, 0, 0, 0, 0, 6, 0],
+                [0, 0, 0, 0, 2, 0, 0, 0],
+                [2, 0, 0, 1, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 1],
+                [0, 1, 0, 0, 0, 2, 0, 0],
+                [0, 0, 0, 6, 0, 0, 0, 0]
+            ];
+
+
+        gameObjects =
+            [
+                [0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 5, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0],
+                [4, 0, 0, 0, 0, 0, 0, 0]
+            ];
+
+        for(var row = 0; row < ROWS; row++)
+        {
+            for(var column = 0; column < COLUMNS; column++)
+            {
+                if(gameObjects[row][column] === SHIP)
+                {
+                    spaceShipRow = row;
+                    spaceShipColumn = column;
+                }
+                if(gameObjects[row][column] === ALIEN)
+                {
+                    alienRow = row;
+                    alienColumn = column;
+                }
+            }
+        }
+        spaceShip.fuel = 15,
+            spaceShip.titanium = 15,
+            spaceShip.experience = 0,
+            spaceShip.winConditionMet = false;
+
+        // begin render.
+        render();
+
+
+
+
     }
 
 
