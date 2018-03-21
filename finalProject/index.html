@@ -53,13 +53,10 @@
     }
 
     #introScreen {
-
         height: 600px;
-
         position: relative;
         margin: auto;
         width: 50%;
-
     }
 
     #introScreen h3 {
@@ -72,8 +69,25 @@
         text-align: center;
     }
 
-    #title {
-        
+    #endScreen {
+        height: 600px;
+        position: relative;
+        margin: auto;
+        width: 50%;
+        display: none;
+    }
+    #endScreen h3 {
+        clear: both;
+        font-family: 'Orbitron', sans-serif;
+        margin-top: 40px;
+    }
+
+    #endScreen div {
+        margin-top: 40px;
+        text-align: center;
+    }
+
+    .title {
         padding-top: 10px;
         font-size: 32px;
         line-height: 1.1em;
@@ -155,9 +169,9 @@
 
 <section id="introScreen">
     <br>
-    <span id="title">Adventures in Space!</span>
+    <span class="title">Adventures in Space!</span>
     <h3>How to play:</h3>
-    <p>1.)Use the arrow keys to move the space ship up, down, left, & right. <br>2.)Try to reach Earth without losing all your fuel & titanium. <br>3.)Avoid the black holes & the alien monster. Alien monster kills you in one hit. <br>4.) Space Stations provide a chance to get more fuel at a random cost of titanium. <br>5.) Pirate ships give you a chance of losing or gaining more titanium at random.<br>6.) Gain experience by trying to kill pirate ships & buying fuel from space stations <br>7.) Your score will be calculated at the end based on your experience, titanium, and fuel.</p>
+    <p>1.) You start bottom left. Use the arrow keys to move the space ship up, down, left, & right. <br>2.) Try to reach Earth (top right) without losing all your fuel & titanium. <br>3.) Avoid the black holes & the alien monster. Alien monster kills you in one hit. <br>4.) Space Stations provide a chance to get more fuel at a random cost of titanium. <br>5.) Pirate ships give you a chance of losing or gaining more titanium at random.<br>6.) Gain experience by trying to kill pirate ships & buying fuel from space stations <br>7.) Your score will be calculated at the end based on your experience, titanium, and fuel.</p>
     <div>
         <button id="start">Start!</button>
     </div>
@@ -180,10 +194,12 @@
 
 </section>
 
+<section id="endScreen">
+    <br>
+    <span class="title">You lose!</span>
+</section>
+
 <script>
-    // there's some weird rendering issue where if the ship goes
-    // where the alien used to be, the ship does not appear after render. this is present in the
-    // original island adventure code as well.
 
     // start the song using jquery
     $('audio#song')[0].play();
@@ -200,7 +216,8 @@
 
     window.addEventListener("keydown", keydownHandler, false);
     // The game map should be 8x8 at least not 6x6. Positioning of the monster is an issue
-    // if the minimum amount of turns to reach the alien is not odd, there will be rendering issues
+    // if the minimum amount of turns from the ships starting point to reach the alien is not odd,
+    // there will be rendering issues.
     // this is important to remember since the monster should not move if we bump into a black hole
     // else we will have more rendering issues.
     const map =
@@ -402,8 +419,8 @@
                 // this is needed since we don't have a blackhole cell we actually go in to
                 // & gamemessage error for blackhole would not display properly otherwise
                 if(blackHoleNear === true) {
-                    // Update the game message. display (spaceship.fuel -1) is needed since spaceship.fuel-- is also applied after
-                    // this function
+                    // Update the game message. display (spaceship.fuel -1) is needed since spaceship.fuel--
+                    // is also applied after this function
                     gameMessage = "You can't go into a blackhole! You have to turn back" +
                         " & barely get out alive. You lose two fuel."
                         + " You have " + (spaceShip.fuel - 1) + " fuel left.";
@@ -563,96 +580,94 @@
 
     function moveAlien()
     {
-        // The 4 possible directions that the alien can move. Can use this with
-        // Space Ship to make a proper maze.
-        var UP = 1;
-        var DOWN = 2;
-        var LEFT = 3;
-        var RIGHT = 4;
+        // NOTE: If the global var blackHoleNear is true, do not move the alien else
+        // there will be collision & rendering issues later in the game.
 
-        // An array to store the valid direction that
-        // the alien or space ship is allowed to move in
-        var validDirections = [];
+        if (blackHoleNear === false) {
 
-        //The final direction that the alien will move in
-        var direction = undefined;
+            // The 4 possible directions that the alien can move. Can use this with
+            // Space Ship to make a proper maze.
+            var UP = 1;
+            var DOWN = 2;
+            var LEFT = 3;
+            var RIGHT = 4;
 
-        //Find out what kinds of things are in the cells
-        //that surround the alien. If the cells contain space,
-        //push the corresponding direction into the validDirections array
-        if(alienRow > 0)
-        {
-            var thingAbove = map[alienRow - 1][alienColumn]
+            // An array to store the valid direction that
+            // the alien or space ship is allowed to move in
+            var validDirections = [];
 
-            if(thingAbove === SPACE)
-            {
-                validDirections.push(UP);
+            //The final direction that the alien will move in
+            var direction = undefined;
+
+            // Find out what kinds of things are in the cells
+            // that surround the alien. If the cells contain space,
+            // push the corresponding direction into the validDirections array.
+
+
+            if (alienRow > 0) {
+                var thingAbove = map[alienRow - 1][alienColumn]
+
+                if (thingAbove === SPACE) {
+                    validDirections.push(UP);
+                }
             }
-        }
-        if(alienRow < ROWS - 1)
-        {
-            var thingBelow = map[alienRow + 1][alienColumn];
-            if(thingBelow === SPACE)
-            {
-                validDirections.push(DOWN);
+            if (alienRow < ROWS - 1) {
+                var thingBelow = map[alienRow + 1][alienColumn];
+                if (thingBelow === SPACE) {
+                    validDirections.push(DOWN);
+                }
             }
-        }
-        if(alienColumn > 0)
-        {
-            var thingToTheLeft = map[alienRow][alienColumn - 1];
-            if(thingToTheLeft === SPACE)
-            {
-                validDirections.push(LEFT);
+            if (alienColumn > 0) {
+                var thingToTheLeft = map[alienRow][alienColumn - 1];
+                if (thingToTheLeft === SPACE) {
+                    validDirections.push(LEFT);
+                }
             }
-        }
-        if(alienColumn < COLUMNS - 1)
-        {
-            var thingToTheRight = map[alienRow][alienColumn + 1];
-            if(thingToTheRight === SPACE)
-            {
-                validDirections.push(RIGHT);
+            if (alienColumn < COLUMNS - 1) {
+                var thingToTheRight = map[alienRow][alienColumn + 1];
+                if (thingToTheRight === SPACE) {
+                    validDirections.push(RIGHT);
+                }
             }
-        }
 
-        //The validDirections array now contains 0 to 4 directions that the
-        //contain SPACE cells.
+            //The validDirections array now contains 0 to 4 directions that the
+            //contain SPACE cells.
 
-        //If a valid direction was found, Randomly choose one of the
-        //possible directions and assign it to the direction variable
-        if(validDirections.length !== 0)
-        {
-            var randomNumber = Math.floor(Math.random() * validDirections.length);
-            direction = validDirections[randomNumber];
-        }
+            //If a valid direction was found, Randomly choose one of the
+            //possible directions and assign it to the direction variable
+            if (validDirections.length !== 0) {
+                var randomNumber = Math.floor(Math.random() * validDirections.length);
+                direction = validDirections[randomNumber];
+            }
 
-        // Move the alien in the chosen direction
-        switch(direction)
-        {
-            case UP:
-                //Clear the alien's current cell
-                gameObjects[alienRow][alienColumn] = 0;
-                //Subtract 1 from the alien's row
-                alienRow--;
-                //Apply the alien's new updated position to the array
-                gameObjects[alienRow][alienColumn] = ALIEN;
-                break;
+            // Move the alien in the chosen direction
+            switch (direction) {
+                case UP:
+                    //Clear the alien's current cell
+                    gameObjects[alienRow][alienColumn] = 0;
+                    //Subtract 1 from the alien's row
+                    alienRow--;
+                    //Apply the alien's new updated position to the array
+                    gameObjects[alienRow][alienColumn] = ALIEN;
+                    break;
 
-            case DOWN:
-                gameObjects[alienRow][alienColumn] = 0;
-                alienRow++;
-                gameObjects[alienRow][alienColumn] = ALIEN;
-                break;
+                case DOWN:
+                    gameObjects[alienRow][alienColumn] = 0;
+                    alienRow++;
+                    gameObjects[alienRow][alienColumn] = ALIEN;
+                    break;
 
-            case LEFT:
-                gameObjects[alienRow][alienColumn] = 0;
-                alienColumn--;
-                gameObjects[alienRow][alienColumn] = ALIEN;
-                break;
+                case LEFT:
+                    gameObjects[alienRow][alienColumn] = 0;
+                    alienColumn--;
+                    gameObjects[alienRow][alienColumn] = ALIEN;
+                    break;
 
-            case RIGHT:
-                gameObjects[alienRow][alienColumn] = 0;
-                alienColumn++;
-                gameObjects[alienRow][alienColumn] = ALIEN;
+                case RIGHT:
+                    gameObjects[alienRow][alienColumn] = 0;
+                    alienColumn++;
+                    gameObjects[alienRow][alienColumn] = ALIEN;
+            }
         }
     }
 
@@ -732,6 +747,7 @@
         }
     }
 
+
     function endGame()
     {
         if(map[spaceShipRow][spaceShipColumn] === EARTH)
@@ -765,6 +781,9 @@
 
         //Remove the keyboard listener to end the game
         window.removeEventListener("keydown", keydownHandler, false);
+
+        // Call the endgamehandler which will display the end screen with their score & a restart button
+        endGameHandler();
     }
 
     function render()
@@ -868,8 +887,10 @@
     function endGameHandler() {
         // Hide the intro screen & game screen & show end screen
         introScreen.style.display = "none";
-        gameScreen.style.display = "block";
+        gameScreen.style.display = "none";
+        endScreen.style.display = "block";
     }
+
 
 </script>
 
